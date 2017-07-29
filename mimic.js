@@ -22,9 +22,14 @@ detector.detectAllAppearance();
 // Unicode values for all emojis Affectiva can detect
 var emojis = [ 128528, 9786, 128515, 128524, 128527, 128521, 128535, 128539, 128540, 128542, 128545, 128563, 128561 ];
 
+
 // Update target emoji being displayed by supplying a unicode value
 function setTargetEmoji(code) {
   $("#target").html("&#" + code + ";");
+}
+
+function getTargetEmoji(){
+    return $("#target").html();
 }
 
 // Convert a special character to its unicode value (can be 1 or 2 units long)
@@ -62,6 +67,7 @@ function onStop() {
     detector.removeEventListener();
     detector.stop();  // stop detector
   }
+  setTargetEmoji(toUnicode('?'));
 };
 
 // Reset button
@@ -73,8 +79,7 @@ function onReset() {
   $('#results').html("");  // clear out results
   $("#logs").html("");  // clear out previous log
 
-  // TODO(optional): You can restart the game as well
-  // <your code here>
+  setTargetEmoji(toUnicode('?'));
 };
 
 // Add a callback to notify when camera access is allowed
@@ -101,8 +106,7 @@ detector.addEventListener("onInitializeSuccess", function() {
   $("#face_video_canvas").css("display", "block");
   $("#face_video").css("display", "none");
 
-  // TODO(optional): Call a function to initialize the game, if needed
-  // <your code here>
+  setTargetEmoji(getRundomEmoji());
 });
 
 // Add a callback to receive the results from processing an image
@@ -132,12 +136,20 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image, timest
     drawFeaturePoints(canvas, image, faces[0]);
     drawEmoji(canvas, image, faces[0]);
 
-    // TODO: Call your function to run the game (define it first!)
-    // <your code here>
+    play(faces[0].emojis.dominantEmoji);
   }
 });
 
+function getRundomEmoji(){
+    var r =  Math.floor((Math.random() * emojis.length));
+    return emojis[r];
+}
 
+function play(emoji) {
+    if(toUnicode(emoji) == toUnicode(getTargetEmoji())) {
+        setTargetEmoji(getRundomEmoji());
+    }
+}
 // --- Custom functions ---
 
 // Draw the detected facial feature points on the image
