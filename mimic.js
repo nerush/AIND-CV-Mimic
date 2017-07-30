@@ -51,6 +51,17 @@ function log(node_name, msg) {
 
 // --- Callback functions ---
 
+var timeoutHandle;
+
+function generateRandomEmoji() {
+    return window.setInterval(function() {
+        setTargetEmoji(getRundomEmoji());
+        total += 1;
+        setScore(correct, total);
+    }, 5000);
+}
+
+
 // Start button
 function onStart() {
   if (detector && !detector.isRunning) {
@@ -67,6 +78,10 @@ function onStop() {
     detector.removeEventListener();
     detector.stop();  // stop detector
   }
+  window.clearTimeout(timeoutHandle);
+  correct = 0;
+  total = 0;
+  setScore(correct,total);
   setTargetEmoji(toUnicode('?'));
 };
 
@@ -79,7 +94,12 @@ function onReset() {
   $('#results').html("");  // clear out results
   $("#logs").html("");  // clear out previous log
 
-  setTargetEmoji(toUnicode('?'));
+  correct = 0;
+  total = 0;
+  setScore(correct, total);
+  setTargetEmoji(getRundomEmoji());
+  window.clearTimeout(timeoutHandle);
+  timeoutHandle = generateRandomEmoji();
 };
 
 // Add a callback to notify when camera access is allowed
@@ -106,7 +126,7 @@ detector.addEventListener("onInitializeSuccess", function() {
   $("#face_video_canvas").css("display", "block");
   $("#face_video").css("display", "none");
 
-  setTargetEmoji(getRundomEmoji());
+  timeoutHandle = generateRandomEmoji();
 });
 
 // Add a callback to receive the results from processing an image
@@ -140,16 +160,6 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image, timest
   }
 });
 
-function getRundomEmoji(){
-    var r =  Math.floor((Math.random() * emojis.length));
-    return emojis[r];
-}
-
-function play(emoji) {
-    if(toUnicode(emoji) == toUnicode(getTargetEmoji())) {
-        setTargetEmoji(getRundomEmoji());
-    }
-}
 // --- Custom functions ---
 
 // Draw the detected facial feature points on the image
@@ -189,6 +199,9 @@ function drawEmoji(canvas, img, face) {
 
 // TODO: Define any variables and functions to implement the Mimic Me! game mechanics
 
+var correct = 0;
+var total = 0;
+
 // NOTE:
 // - Remember to call your update function from the "onImageResultsSuccess" event handler above
 // - You can use setTargetEmoji() and setScore() functions to update the respective elements
@@ -201,3 +214,19 @@ function drawEmoji(canvas, img, face) {
 // - Define a game reset function (same as init?), and call it from the onReset() function above
 
 // <your code here>
+
+function getRundomEmoji(){
+    var r =  Math.floor((Math.random() * emojis.length));
+    return emojis[r];
+}
+
+function play(emoji) {
+    if(toUnicode(emoji) == toUnicode(getTargetEmoji())) {
+        correct += 1;
+        total += 1;
+        setScore(correct, total);
+        setTargetEmoji(getRundomEmoji());
+        window.clearTimeout(timeoutHandle);
+        timeoutHandle = generateRandomEmoji();
+    }
+}
