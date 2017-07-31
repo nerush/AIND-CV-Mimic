@@ -51,16 +51,6 @@ function log(node_name, msg) {
 
 // --- Callback functions ---
 
-var timeoutHandle;
-
-function generateRandomEmoji() {
-    return window.setInterval(function() {
-        setTargetEmoji(getRundomEmoji());
-        total += 1;
-        setScore(correct, total);
-    }, 5000);
-}
-
 
 // Start button
 function onStart() {
@@ -97,7 +87,7 @@ function onReset() {
   correct = 0;
   total = 0;
   setScore(correct, total);
-  setTargetEmoji(getRundomEmoji());
+  setTargetEmoji(getRandomEmoji());
   window.clearTimeout(timeoutHandle);
   timeoutHandle = generateRandomEmoji();
 };
@@ -201,6 +191,7 @@ function drawEmoji(canvas, img, face) {
 
 var correct = 0;
 var total = 0;
+var timeoutHandle;
 
 // NOTE:
 // - Remember to call your update function from the "onImageResultsSuccess" event handler above
@@ -215,7 +206,7 @@ var total = 0;
 
 // <your code here>
 
-function getRundomEmoji(){
+function getRandomEmoji(){
     var r =  Math.floor((Math.random() * emojis.length));
     return emojis[r];
 }
@@ -225,8 +216,16 @@ function play(emoji) {
         correct += 1;
         total += 1;
         setScore(correct, total);
-        setTargetEmoji(getRundomEmoji());
+        setTargetEmoji(getRandomEmoji());
         window.clearTimeout(timeoutHandle);
         timeoutHandle = generateRandomEmoji();
     }
+}
+
+function generateRandomEmoji() {
+    return window.setInterval(function() {
+        setTargetEmoji(getRandomEmoji());
+        total += 1;
+        setScore(correct, total);
+    }, 5000);
 }
