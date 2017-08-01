@@ -169,7 +169,7 @@ function drawFeaturePoints(canvas, img, face) {
     var endAngle = 2*Math.PI;
 
     ctx.beginPath();
-    ctx.arc(x,y,2,0,2*Math.PI);
+    ctx.arc(x,y,2,0,endAngle);
     ctx.stroke();
   }
 }
